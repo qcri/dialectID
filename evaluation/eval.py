@@ -12,12 +12,12 @@ from __future__ import division
 import sys  
 reload(sys)
 import itertools
-
+import numpy as np
 
 sys.setdefaultencoding('utf8')
 
-langList=['EGY', 'GLF', 'LAV', 'MSA','NOR']
-_len=len(langList)
+langList = ['EGY', 'GLF', 'LAV', 'MSA','NOR']
+_len = len(langList)
 
 if len(sys.argv) != 3   :
     print 'usage: eval.py ref hyp'
@@ -26,7 +26,7 @@ if len(sys.argv) != 3   :
 testFeatFile = sys.argv[1]
 predFile = sys.argv[2]
 
-truth =[] 
+truth = [] 
 with open(testFeatFile) as f:
     content = f.readlines()
     for line in content: truth.append (langList.index(line.split ( )[-1]));
@@ -38,25 +38,21 @@ with open(predFile) as f:
     for line in content: claasifier.append (langList.index(line.split ( )[-1]));
 f.close()
 
-results=[[0 for x in xrange(_len)] for y in xrange(_len)]
+results = np.zeros((_len, _len))
 for _t, _g in zip(truth, claasifier):
-    _truthIdx=int(_t)-1
-    _claasifierIdx=int(_g)-1
-    results[_truthIdx][_claasifierIdx]+=1
+    _truthIdx = int(_t) - 1
+    _claasifierIdx = int(_g) - 1
+    results[_truthIdx][_claasifierIdx] += 1
 
 
-total_accuracy = [0 for x in xrange(_len)]
+total_accuracy = np.zeros((_len)) 
 total_i = total_accuracy [:]
 total_j = total_accuracy [:]
 
 
-for i in range(_len):
-    for j in range(_len):
-        if (i == j ): total_accuracy[i]=results[i][j]
-        total_i[i]+=results[i][j]
-        total_j[i]+=results[j][i]
-
-
+total_accuracy = np.diagonal(results)
+total_i = np.sum(results, axis=1)
+total_j = np.sum(results, axis=0)
 
 recall=[]
 prec=[]
