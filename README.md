@@ -33,9 +33,10 @@ Run 'run.sh' this can be used to show an example of the code and the data
 This data and the baseline system  is described in [this](http://www.cstr.ed.ac.uk/downloads/publications/2016/is2016-automatic-dialect-detection.pdf) paper:
 
     @inproceedings{ali2016automatic,
-  title={Automatic Dialect Detection in Arabic Broadcast Speech},
-  author={Ali, Ahmed and Dehak, Najim and Cardinal, Patrick and Khurana, Sameer and Yella, Sree Harsha and Glass, James and Bell, Peter and Renals, Steve},
-  booktitle={Interspeech, San Francisco, USA},
-  pages={2934--2938},
-  year={2016}
-}
+      author={Ali, Ahmed and Dehak, Najim and Cardinal, Patrick and Khurana, Sameer and Yella, Sree Harsha and Glass, James and Bell, Peter and Renals, Steve},
+      title={Automatic Dialect Detection in Arabic Broadcast Speech},
+      booktitle={Interspeech, San Francisco, USA},
+      pages={2934--2938},
+      year={2016}
+    }
+
