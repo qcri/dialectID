@@ -14,10 +14,10 @@ This also has a simple baseline system for Automatic Dialect Detection task in v
 * The data have been generated from brodcast news.
 
 * For each dialect, there are four files:
-** $dialect.words; this is the lexical features generated using LVCSR
-** $dialect.phones; this is the pheoneme sequence using phoneme recognition system
-** $dialect.phone_duration; this is the phoneme sequence, and the duration in milli seconds for each phone, for example w_030 means phone w for 30 milli seconds
-** $dialect.ivec; this is the bottle neck ivector feature vector. It has a fixed length of 400 per uttrance.
+* $dialect.words; this is the lexical features generated using LVCSR
+* $dialect.phones; this is the pheoneme sequence using phoneme recognition system
+* $dialect.phone_duration; this is the phoneme sequence, and the duration in milli seconds for each phone, for example w_030 means phone w for 30 milli seconds
+* $dialect.ivec; this is the bottle neck ivector feature vector. It has a fixed length of 400 per uttrance.
 
 # Sample code 
 
