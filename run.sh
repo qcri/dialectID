@@ -8,7 +8,7 @@ features=words
 context=2
 C=1000 #regularization parameter, trade-off between training error and margin
 
-cat ../train/{EGY,GLF,LAV,MSA,NOR}.$features | cut -d ' ' -f 2- > all.$features
+cat ./data/train/{EGY,GLF,LAV,MSA,NOR}.$features | cut -d ' ' -f 2- > all.$features
 ./scripts/makeDictPrepSVM.py all.$features dict.$features.$context train.$features.$context test.$features.$context $context $features
 
 cat train.$features.$context | cut -d ' ' -f2- > train
