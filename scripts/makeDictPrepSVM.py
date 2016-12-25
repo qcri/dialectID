@@ -95,7 +95,7 @@ header+="\"dialects\""
 
 
 for index, lang in enumerate(langList):
-  __file="./data/train/"+lang+"."+extension
+  __file="./data/train.vardial2017/"+lang+"."+extension
   with open(__file) as f:
       content = f.readlines()
   f.close()
@@ -117,7 +117,7 @@ trainFile.close()
 
 testFile = open(testFeat, "w")
 for index, lang in enumerate(langList):
-  __file="./data/test/"+lang+"."+extension
+  __file="./data/dev.vardial2017/"+lang+"."+extension
   with open(__file) as f:
       content = f.readlines()
   f.close()
