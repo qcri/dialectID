@@ -23,7 +23,9 @@ import numpy as np
 import sys
 
 target_names = ['EGY','GLF','LAV','MSA','NOR']
-colors = ['navy', 'turquoise', 'darkorange', 'green', 'blue']
+colors = ['black', 'turquoise', 'darkorange', 'green', 'blue']
+marker = [2,3,4,5,6]
+    
 lw = 2
 
 
@@ -41,13 +43,13 @@ X_r = pca.fit(X).transform(X)
 #np.savetxt('type.pca', X_r)
 fig = plt.figure()
 plt.clf()
-for color, i, target_name in zip(colors, [0, 1, 2, 3, 4], target_names):
+for color, i, target_name, m in zip(colors, [1, 2, 3, 4, 5], target_names, marker):
     plt.scatter(X_r[y == i, 0], X_r[y == i, 1], color=color, alpha=.8, lw=lw,
-                label=target_name)
+                label=target_name, marker=(m, 1))
 plt.legend(loc='best', shadow=False, scatterpoints=1)
 plt.title('PCA of dialect dataset')
 #plt.show()
-fig.savefig("pca.png", bbox_inches='tight')
+fig.savefig("pca.pdf", bbox_inches='tight')
 
 # Percentage of variance explained for each components
 #print('explained variance ratio (first two components): %s'
@@ -58,13 +60,13 @@ lda = LinearDiscriminantAnalysis(n_components=4)
 X_r2 = lda.fit(X, y).transform(X)
 #np.savetxt('type.lda', X_r2)
 plt.clf()
-for color, i, target_name in zip(colors, [0, 1, 2, 3, 4], target_names):
+for color, i, target_name, m in zip(colors, [1, 2, 3, 4, 5], target_names, marker):
     plt.scatter(X_r2[y == i, 0], X_r2[y == i, 1], alpha=.8, color=color,
-                label=target_name)
+                label=target_name, marker=(m, 1))
 plt.legend(loc='best', shadow=False, scatterpoints=1)
 plt.title('LDA of dialect dataset')
 # Percentage of variance explained for each components
-fig.savefig("lda.png", bbox_inches='tight')
+fig.savefig("lda.pdf", bbox_inches='tight')
 
 
 #TSNE
@@ -73,12 +75,12 @@ np.set_printoptions(suppress=True)
 X_r3=model.fit_transform(X)
 #np.savetxt('type.tsne', X_r3)
 plt.clf()
-for color, i, target_name in zip(colors, [0, 1, 2, 3, 4], target_names):
+for color, i, target_name, m in zip(colors, [1, 2, 3, 4, 5], target_names, marker):
     plt.scatter(X_r3[y == i, 0], X_r2[y == i, 1], alpha=.8, color=color,
-                label=target_name)
+                label=target_name, marker=(m, 1))
 plt.legend(loc='best', shadow=False, scatterpoints=1)
 plt.title('TSNE of dialect dataset')
-fig.savefig("tsne.png", bbox_inches='tight')
+fig.savefig("tsne.pdf", bbox_inches='tight')
 
 
 
