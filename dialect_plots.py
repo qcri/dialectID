@@ -7,6 +7,7 @@ from sklearn import datasets
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.manifold import TSNE
+from matplotlib.animation import FuncAnimation
 
 import matplotlib
 # matplotlib.use('Agg') # Must be before importing matplotlib.pyplot or pylab!
@@ -31,18 +32,20 @@ lda = LinearDiscriminantAnalysis(n_components=3)
 X_r2 = lda.fit(X, y).transform(X)
 
 
+
+
 fig = plt.figure(figsize=(12, 12))
 ax = fig.add_subplot(111, projection='3d')
 
-ax.scatter(X_r2[y == 1, 0], X_r2[y == 1, 1], X_r2[y == 1, 2], label='Egyptian',
+ax.scatter(X_r2[y == 1, 0], X_r2[y == 1, 1], X_r2[y == 1, 2], label='Egyptian', alpha=0.6,
            c='r', marker='o', s=5, depthshade=False)
-ax.scatter(X_r2[y == 2, 0], X_r2[y == 2, 1], X_r2[y == 2, 2], label='Gulf',
+ax.scatter(X_r2[y == 2, 0], X_r2[y == 2, 1], X_r2[y == 2, 2], label='Gulf', alpha=0.6,
            c='b', marker='^', s=5, depthshade=False)
-ax.scatter(X_r2[y == 3, 0], X_r2[y == 3, 1], X_r2[y == 3, 2], label='Levantine',
+ax.scatter(X_r2[y == 3, 0], X_r2[y == 3, 1], X_r2[y == 3, 2], label='Levantine', alpha=0.6,
            c='y', marker='x', s=5, depthshade=False)
-ax.scatter(X_r2[y == 4, 0], X_r2[y == 4, 1], X_r2[y == 4, 2], label='MSA',
+ax.scatter(X_r2[y == 4, 0], X_r2[y == 4, 1], X_r2[y == 4, 2], label='MSA', alpha=0.6,
            c='c', marker='P', s=5, depthshade=False)
-ax.scatter(X_r2[y == 5, 0], X_r2[y == 5, 1], X_r2[y == 5, 2], label='Moroccan',
+ax.scatter(X_r2[y == 5, 0], X_r2[y == 5, 1], X_r2[y == 5, 2], label='Moroccan', alpha=0.6,
            c='g', marker='D', s=5, depthshade=False)
 
 # Make legend, set axes limits and labels
@@ -51,5 +54,6 @@ ax.legend()
 ax.set_xlabel('X Label')
 ax.set_ylabel('Y Label')
 ax.set_zlabel('Z Label')
-plt.autoscale(tight=True)
+
+
 plt.show()
