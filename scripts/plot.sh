@@ -12,7 +12,7 @@ for i in "${!lang[@]}"; do
  cat ../data/dev.vardial2017/$lang.ivec | cut -d ' ' -f2-  | sed "s:^:$index :" >> dev$$ 
 done 
 
-for type in train dev; do
+for type in dev; do
   cat ${type}$$ | cut -d ' ' -f1 > labels
   cat ${type}$$ | cut -d ' ' -f2- > feats 
   time python plot_pca_lda_tsne.py
@@ -22,7 +22,7 @@ for type in train dev; do
 done 
 
 #tidy up 
-rm -fr train$$ dev$$ labels feats 
+#rm -fr train$$ dev$$ labels feats 
 
 
 

@@ -4,7 +4,6 @@ from __future__ import division
 import sys  
 reload(sys)
 import codecs
-import bs4 as bs
 import collections
 import re
 from subprocess import call
