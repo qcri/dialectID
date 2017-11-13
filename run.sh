@@ -4,8 +4,8 @@
 
 # build SVM classifier using word sequence
 
-features=ivec # currently support ivec and words
-context=2 # Not applicable on the ivector features as it is already hot vector
+features=words # currently support ivec and words
+context=3 # Not applicable on the ivector features as it is already hot vector
 C=1000 #regularization parameter, trade-off between training error and margin
 
 if [[ $features == "ivec" ]] ; then  
@@ -26,6 +26,7 @@ else
   ./scripts/makeDictPrepSVM.py all.$features.$$ dict.$features.$context train$$ test$$ $context $features
 fi
 
+#exit 111
 
 cat train$$ | cut -d ' ' -f2- > train
 cat test$$ | cut -d ' ' -f2- > test
