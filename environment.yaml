@@ -1,0 +1,39 @@
+name: py2_env
+channels:
+- defaults
+dependencies:
+- ca-certificates=2017.08.26=h1d4fec5_0
+- certifi=2017.7.27.1=py27h9ceb091_0
+- libedit=3.1=heed3624_0
+- libffi=3.2.1=hd88cf55_4
+- libgcc-ng=7.2.0=h7cc24e2_2
+- libstdcxx-ng=7.2.0=h7a57d05_2
+- ncurses=6.0=h9df7e31_2
+- openssl=1.0.2m=h8cfc7e7_0
+- pip=9.0.1=py27ha730c48_4
+- python=2.7.14=ha6fc286_23
+- readline=7.0=ha6073c6_4
+- setuptools=36.5.0=py27h68b189e_0
+- sqlite=3.20.1=hb898158_2
+- tk=8.6.7=hc745277_3
+- wheel=0.29.0=py27h411dd7b_1
+- zlib=1.2.11=ha838bed_2
+- pip:
+  - backports.weakref==1.0.post1
+  - bleach==1.5.0
+  - enum34==1.1.6
+  - funcsigs==1.0.2
+  - futures==3.1.1
+  - guppy==0.1.10
+  - html5lib==0.9999999
+  - markdown==2.6.9
+  - mock==2.0.0
+  - numpy==1.13.3
+  - pbr==3.1.1
+  - protobuf==3.4.0
+  - six==1.11.0
+  - tensorflow==1.4.0
+  - tensorflow-tensorboard==0.4.0rc2
+  - werkzeug==0.12.2
+prefix: /home/disooqi/anaconda2/envs/py2_env
+
