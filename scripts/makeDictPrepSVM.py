@@ -60,7 +60,7 @@ word_features = [r'EGY.words', r'GLF.words',r'LAV.words', r'MSA.words', r'NOR.wo
 #     sys.exit (1)
     
 #phoneme = sys.argv[1]
-ngramCount = 3
+ngramCount = 1
 dictFile_path = 'dict.words.'+str(ngramCount)
 # trainFeat = sys.argv[3]
 # testFeat = sys.argv[4]
@@ -145,7 +145,7 @@ def get_feat_label(dict_file, feat_file):
 context = ngramCount
 # dict_file = 'data/train.vardial2017/dict.words.c'+str(context)
 # feat_file = 'data/train.vardial2017/words.c'+str(context)
-dict_file = '../dict.words.3'
+dict_file = '../dict.words.1'
 feat_file = '../all.words'
 
 
