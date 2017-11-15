@@ -1,9 +1,9 @@
 #!/usr/bin/python -tt
+# -*- coding:utf-8 -*-
 
 # Dialect detection data preparation for SVM multi class calssifier.
 # This scripts support up to six gram context
 # Copyright (C) 2016, Qatar Computing Research Institute, HBKU (author: Ahmed Ali)
-#
 
 import os
 import codecs
@@ -12,16 +12,6 @@ import tensorflow as tf
 import collections
 import siamese_model_words as siamese_model
 import ivector_tools as it
-# from guppy import hpy
-# from pkgcore.config import load_config
-
-# !/usr/bin/python -tt
-
-# Dialect detection data preparation for SVM multi class calssifier.
-# This scripts support up to six gram context
-# Copyright (C) 2016, Qatar Computing Research Institute, HBKU (author: Ahmed Ali)
-#
-# import collections
 
 
 def sortedtHashByKey(_hashFeatMap):
@@ -29,7 +19,6 @@ def sortedtHashByKey(_hashFeatMap):
     x = ""
     for k, v in _od.iteritems(): x += str(k) + ":" + str(v) + " "
     return x
-
 
 def printHashByKey(_hashFeatMap, _ddictLen):
     x = ""
@@ -39,7 +28,6 @@ def printHashByKey(_hashFeatMap, _ddictLen):
         else:
             x += "0,"
     return x
-
 
 def xgramList(_line, ngramCount):
     s = 0
@@ -87,7 +75,8 @@ langList = ['EGY', 'GLF', 'LAV', 'MSA', 'NOR']
 
 phoneDict = {}
 for line in content:
-    for ngram in xgramList(line, ngramCount): phoneDict[ngram] = 1
+    for ngram in xgramList(line, ngramCount):
+        phoneDict[ngram] = 1
 
 dictFile = open(dictFile, "w")
 phoneMap = {}
@@ -180,10 +169,6 @@ devFile.close()
 # cat ./data/train.vardial2017/{EGY,GLF,LAV,MSA,NOR}.$features | cut -d ' ' -f 2- > all.$features.$$
 
 
-
-
-
-
 # tf.reset_default_graph()
 # # Create some variables.
 # # v1 = tf.get_variable("v1", [3], initializer = tf.zeros_initializer)
@@ -243,7 +228,7 @@ dev_features, dev_labels, dev_names = get_feat_label(dict_file,devFeat)
 # feat_file = 'data/test.MGB3/words.c'+str(context)
 # tst_features, tst_labels, tst_names = get_feat_label(dict_file, testFeat)
 #
-print trn_features.shape, dev_features.shape #, tst_features.shape
+print(trn_features.shape, dev_features.shape) #, tst_features.shape
 #
 #
 # trn_features, trn_labels, trn_names = get_feat_label(dict_file,feat_file)
@@ -264,24 +249,53 @@ saver.restore(sess, r'../suwan_model/model60400.ckpt')  # saver_folder+'/model'+
 lang_mean=[]
 for i, lang in enumerate(langList):
 #     lang_mean.append(np.mean(np.append(trn_features[np.nonzero(trndev_labels == i+1)] ,dev_features[np.nonzero(dev_labels == i+1)],axis=0),axis=0))
-    lang_mean.append(np.mean( trn_features[np.nonzero(trn_labels == i+1)][:],axis=0 ) )
+    lang_mean.append(np.mean(trn_features[np.nonzero(trn_labels == i+1)][:],axis=0))
 
 lang_mean = np.array(lang_mean)
 lang_mean = it.length_norm(lang_mean)
 
 print np.shape(trn_features), np.shape(dev_features), np.shape(lang_mean)#,np.shape(tst_features) )
 
-trn_features_siam = siamese.o1.eval({siamese.x1:trn_features})
+# utterance = "انا مقلتش كدا خالص إمبارح"
+lang_mean_siam = np.load(r'../lang_mean_words.npy')
+print lang_mean_siam.shape
+
+utterance = "Almwjwdyn fy AlErbyp mnhkyn ldrjp <n hw $y' AlESAyA >w Al$Ah"
+utt_indxes = dict()
+
+utt_ft = np.zeros((1, 41657), dtype='float32')
+
+for ngram in xgramList(utterance, ngramCount):
+    ngram_index = phoneMap.get(ngram, None)
+    if not ngram_index:
+        continue
+    if ngram_index in utt_indxes.keys():
+        utt_indxes[ngram_index] += 1
+    else:
+        utt_indxes[ngram_index] = 1
+else:
+    for ph_idx, word_count in utt_indxes.items():
+        utt_ft[0][ph_idx-1] = word_count
+    utt_ft_siam = siamese.o1.eval({siamese.x1: utt_ft})
+    utt_scores = lang_mean_siam.dot(utt_ft_siam.transpose())
+    hypo_lang = np.argmax(utt_scores, axis=0)
+    print hypo_lang
+    # sorted_utt_indxes = sortedtHashByKey(utt_indxes)
+
+
+
+
+# trn_features_siam = siamese.o1.eval({siamese.x1:trn_features})
 # # dev_features_siam = siamese.o1.eval({siamese.x1:dev_features})
 # # tst_features_siam = siamese.o1.eval({siamese.x1:tst_features})
-lang_mean_siam = siamese.o1.eval({siamese.x1:lang_mean})
+# lang_mean_siam = siamese.o1.eval({siamese.x1:lang_mean})
 #
-tst_scores = lang_mean_siam.dot(trn_features_siam.transpose())
+# tst_scores = lang_mean_siam.dot(trn_features_siam.transpose())
 
-hypo_lang = np.argmax(tst_scores,axis = 0)
-temp = ((trn_labels-1) - hypo_lang)
-acc =1- np.size(np.nonzero(temp)) / float(np.size(trn_labels))
-print 'Final accurary on test dataset : %0.3f' %(acc)
+# hypo_lang = np.argmax(tst_scores,axis = 0)
+# temp = ((trn_labels-1) - hypo_lang)
+# acc =1- np.size(np.nonzero(temp)) / float(np.size(trn_labels))
+# print 'Final accurary on test dataset : %0.3f' %(acc)
 # # # print(tst_scores.shape)
 # # hypo_lang = np.argmax(tst_scores,axis = 0)
 # # temp = ((tst_labels-1) - hypo_lang)
