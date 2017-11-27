@@ -1,33 +1,9 @@
-#!/usr/bin/python -tt
 # -*- coding:utf-8 -*-
-
-# Dialect detection data preparation for SVM multi class calssifier.
-# This scripts support up to six gram context
-# Copyright (C) 2016, Qatar Computing Research Institute, HBKU (author: Ahmed Ali)
-
-import os
-import codecs
 import numpy as np
 import tensorflow as tf
-import collections
 import siamese_model_words as siamese_model
-import ivector_tools as it
 
 
-def sortedtHashByKey(_hashFeatMap):
-    _od = collections.OrderedDict(sorted(_hashFeatMap.items()))
-    x = ""
-    for k, v in _od.iteritems(): x += str(k) + ":" + str(v) + " "
-    return x
-
-def printHashByKey(_hashFeatMap, _ddictLen):
-    x = ""
-    for n in range(_ddictLen):
-        if n + 1 in _hashFeatMap.keys():
-            x += str(_hashFeatMap[n + 1]) + ","
-        else:
-            x += "0,"
-    return x
 
 def xgramList(_line, ngramCount):
     s = 0
@@ -49,21 +25,11 @@ def xgramList(_line, ngramCount):
         s += 1
     return rlist
 
-
-# if len(sys.argv) != 7:
-#     print 'usage: makeDictPrepSVM.py  all.txt dictMap.txt train.feats test.feats ngramcount features'
-#     sys.exit (1)
-
-# phoneme = sys.argv[1]
+# todo: do we really need this file
 phoneme = '../all.words'
-# dictFile = sys.argv[2]
-dictFile = 'dict.words.1'
-# trainFeat = sys.argv[3]
+# dictFile = 'dict.words.1'
 trainFeat = 'trainFeat_file'
 devFeat = 'devFeat_file'
-# testFeat = sys.argv[4]
-# testFeat = 'testFeat_file'
-# ngramCount = int(sys.argv[5])
 ngramCount = 1
 extension = 'words'
 
@@ -78,164 +44,18 @@ for line in content:
     for ngram in xgramList(line, ngramCount):
         phoneDict[ngram] = 1
 
-dictFile = open(dictFile, "w")
 phoneMap = {}
 index = 1
 for phoneGroup in phoneDict.keys():
-    dictFile.write("%d %s\n" % (index, phoneGroup))
     phoneMap[phoneGroup] = index
     index += 1
-dictFile.close()
+
 _dictLength = index - 1
-
-count = 1
-trainFile = open(trainFeat, "w")
-
-header = ""
-for n in range(_dictLength):
-    header += "\"P" + str(n) + "\","
-header += "\"dialects\""
-
-for index, lang in enumerate(langList):
-    __file = "../data/train.vardial2017/" + lang + "." + extension
-    with open(__file) as f:
-        content = f.readlines()
-    f.close()
-
-    for line in content:
-        id = line.split(' ', 1)[0]  # get the ID
-        line = line.split(' ', 1)[1]  # remove utterance id
-        featMapHash = {}
-        for ngram in xgramList(line, ngramCount):
-            ngram_index = phoneMap[ngram]
-            if ngram_index in featMapHash.keys():
-                featMapHash[ngram_index] += 1
-            else:
-                featMapHash[ngram_index] = 1
-        x = sortedtHashByKey(featMapHash)
-        trainFile.write("%s %d %s\n" % (id, index + 1, x))
-
-        count += 1
-
-trainFile.close()
-
-devFile = open(devFeat, "w")
-for index, lang in enumerate(langList):
-    __file = "../data/dev.vardial2017/" + lang + "." + extension
-    with open(__file) as f:
-        content = f.readlines()
-    f.close()
-
-    for line in content:
-        id = line.split(' ', 1)[0]  # get the ID
-        featMapHash = {}
-        for ngram in xgramList(line, ngramCount):
-            try:
-                ngram_index = phoneMap[ngram]
-            except KeyError:
-                pass
-            if ngram_index in featMapHash.keys():
-                featMapHash[ngram_index] += 1
-            else:
-                featMapHash[ngram_index] = 1
-        x = sortedtHashByKey(featMapHash)
-        devFile.write("%s %d %s\n" % (id, index + 1, x))
-devFile.close()
-
-# testFile = open(testFeat, "w")
-# for index, lang in enumerate(langList):
-#     __file = "../data/dev.vardial2017/" + lang + "." + extension
-#     with open(__file) as f:
-#         content = f.readlines()
-#     f.close()
-#
-#     for line in content:
-#         id = line.split(' ', 1)[0]  # get the ID
-#         featMapHash = {}
-#         for ngram in xgramList(line, ngramCount):
-#             try:
-#                 ngram_index = phoneMap[ngram]
-#             except KeyError:
-#                 pass
-#             if ngram_index in featMapHash.keys():
-#                 featMapHash[ngram_index] += 1
-#             else:
-#                 featMapHash[ngram_index] = 1
-#         x = sortedtHashByKey(featMapHash)
-#         testFile.write("%s %d %s\n" % (id, index + 1, x))
-# testFile.close()
-
-##########################################################################################################
-# cat ./data/train.vardial2017/{EGY,GLF,LAV,MSA,NOR}.$features | cut -d ' ' -f 2- > all.$features.$$
-
-
-# tf.reset_default_graph()
-# # Create some variables.
-# # v1 = tf.get_variable("v1", [3], initializer = tf.zeros_initializer)
-# # v2 = tf.get_variable("v2", [5], initializer = tf.zeros_initializer)
-#
-
-
-
-def get_dataset_size(dict_file,feat_file):
-# Counting feature dimension and total number of utterances
-    f = open(dict_file)
-    dict_dim = 0
-    for line in f:
-        dict_dim+=1
-    f.close()
-    feat_len = 0
-    f = open(feat_file)
-    for line in f:
-        feat_len+=1
-    f.close()
-    return dict_dim, feat_len
-
-def get_feat_label(dict_file, feat_file):
-    # Get feature vectors from files
-    dict_dim, feat_len = get_dataset_size(dict_file, feat_file)
-    features = np.zeros((feat_len, dict_dim), dtype='float32')
-    labels = np.zeros((feat_len), dtype='int8')
-    names = []
-    f = open(feat_file)
-    count = 0
-    for line in f:
-        names.append(line.split()[0])
-        labels[count] = line.split()[1]
-        line = line.split()[2:]
-        for iter in range(0, len(line)):
-            elements = line[iter].split(':')
-            features[count][int(elements[0]) - 1] = elements[1]
-        count = count + 1
-    f.close()
-
-    return features, labels, names
-
-
-
-context = ngramCount
-# dict_file = 'data/train.vardial2017/dict.words.c'+str(context)
-# feat_file = 'data/train.vardial2017/words.c'+str(context)
-dict_file = 'dict.words.1'
-# feat_file = '../all.words'
-#
-#
-trn_features, trn_labels, trn_names = get_feat_label(dict_file,trainFeat)
-#
-# feat_file = 'data/dev.vardial2017/words.c'+str(context)
-dev_features, dev_labels, dev_names = get_feat_label(dict_file,devFeat)
-# #
-# feat_file = 'data/test.MGB3/words.c'+str(context)
-# tst_features, tst_labels, tst_names = get_feat_label(dict_file, testFeat)
-#
-print(trn_features.shape, dev_features.shape) #, tst_features.shape
-#
-#
-# trn_features, trn_labels, trn_names = get_feat_label(dict_file,feat_file)
+input_dim = 41657
 #
 # init variables
 sess = tf.InteractiveSession()
-siamese = siamese_model.siamese(np.shape(trn_features)[1])
+siamese = siamese_model.siamese(input_dim)
 global_step = tf.Variable(0, trainable=False)
 learning_rate = tf.train.exponential_decay(0.01, global_step,
                                            5000, 0.99, staircase=True)
@@ -245,25 +65,24 @@ sess.run(tf.global_variables_initializer())
 
 saver.restore(sess, r'../suwan_model/model60400.ckpt')  # saver_folder+'/model'+str(RESTORE_STEP)+'.ckpt'
 
-#language modeling
-lang_mean=[]
-for i, lang in enumerate(langList):
-#     lang_mean.append(np.mean(np.append(trn_features[np.nonzero(trndev_labels == i+1)] ,dev_features[np.nonzero(dev_labels == i+1)],axis=0),axis=0))
-    lang_mean.append(np.mean(trn_features[np.nonzero(trn_labels == i+1)][:],axis=0))
-
-lang_mean = np.array(lang_mean)
-lang_mean = it.length_norm(lang_mean)
-
-print np.shape(trn_features), np.shape(dev_features), np.shape(lang_mean)#,np.shape(tst_features) )
-
 # utterance = "انا مقلتش كدا خالص إمبارح"
 lang_mean_siam = np.load(r'../lang_mean_words.npy')
-print lang_mean_siam.shape
+# print lang_mean_siam.shape
 
-utterance = "Almwjwdyn fy AlErbyp mnhkyn ldrjp <n hw $y' AlESAyA >w Al$Ah"
+# builder = tf.saved_model_builder.SavedModelBuilder(r'../suwan_model/')
+#
+# with tf.Session(graph=tf.Graph()) as sess:
+#   builder.add_meta_graph_and_variables(sess,
+#                                        [tag_constants.TRAINING])
+# # Add a second MetaGraphDef for inference.
+# with tf.Session(graph=tf.Graph()) as sess:
+#   builder.add_meta_graph([tag_constants.SERVING])
+# builder.save()
+
+utterance = "gAly EEEEEEEEEE EEEEEEEEE gAlyA jdA sssss sssss ssssss sssssss ssssss"
 utt_indxes = dict()
 
-utt_ft = np.zeros((1, 41657), dtype='float32')
+utt_ft = np.zeros((1, input_dim), dtype='float32')
 
 for ngram in xgramList(utterance, ngramCount):
     ngram_index = phoneMap.get(ngram, None)
@@ -274,35 +93,19 @@ for ngram in xgramList(utterance, ngramCount):
     else:
         utt_indxes[ngram_index] = 1
 else:
-    for ph_idx, word_count in utt_indxes.items():
-        utt_ft[0][ph_idx-1] = word_count
-    utt_ft_siam = siamese.o1.eval({siamese.x1: utt_ft})
-    utt_scores = lang_mean_siam.dot(utt_ft_siam.transpose())
-    hypo_lang = np.argmax(utt_scores, axis=0)
-    print hypo_lang
+    if len(utt_indxes) != 0 and len(utterance) != 0:
+        for ph_idx, word_count in utt_indxes.items():
+            utt_ft[0][ph_idx-1] = word_count
+        utt_ft_siam = siamese.o1.eval({siamese.x1: utt_ft})
+        utt_scores = lang_mean_siam.dot(utt_ft_siam.transpose())
+        hypo_lang = np.argmax(utt_scores, axis=0)
+        print repr(utterance)
+        print langList[hypo_lang.squeeze()]
+    else:
+        print('unknown')
     # sorted_utt_indxes = sortedtHashByKey(utt_indxes)
 
 
 
 
-# trn_features_siam = siamese.o1.eval({siamese.x1:trn_features})
-# # dev_features_siam = siamese.o1.eval({siamese.x1:dev_features})
-# # tst_features_siam = siamese.o1.eval({siamese.x1:tst_features})
-# lang_mean_siam = siamese.o1.eval({siamese.x1:lang_mean})
-#
-# tst_scores = lang_mean_siam.dot(trn_features_siam.transpose())
 
-# hypo_lang = np.argmax(tst_scores,axis = 0)
-# temp = ((trn_labels-1) - hypo_lang)
-# acc =1- np.size(np.nonzero(temp)) / float(np.size(trn_labels))
-# print 'Final accurary on test dataset : %0.3f' %(acc)
-# # # print(tst_scores.shape)
-# # hypo_lang = np.argmax(tst_scores,axis = 0)
-# # temp = ((tst_labels-1) - hypo_lang)
-# # acc =1- np.size(np.nonzero(temp)) / float(np.size(tst_labels))
-# # print 'Final accurary on test dataset : %0.3f' %(acc)
-#
-#
-#
-#
-#
